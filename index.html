@@ -24,17 +24,94 @@
 let canvas = document.getElementById("game");
 let ctx = canvas.getContext("2d");
 
-let snake, direction, food, running;
-let direction = "RIGHT"
+let snake;
+let direction;
+let food;
+let running = false;
 
+// START GAME
 function startGame() {
-    snake = [{x:100,y:100},{x:90,y:100},{x:80,y:100}];
-    direction = "RIGHT";
+    snake = [{x:200,y:200},{x:190,y:200},{x:180,y:200}];
+    direction = "RIGHT";   // ✅ default direction
     running = true;
+
     spawnFood();
-    draw();   // ✅ draw immediately
+    draw();
     move();   // ✅ start movement immediately
 }
+
+// FOOD
+function spawnFood() {
+    food = {
+        x: Math.floor(Math.random()*40)*10,
+        y: Math.floor(Math.random()*40)*10
+    };
+}
+
+// DRAW
+function draw() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,0,400,400);
+
+    ctx.fillStyle = "green";
+    snake.forEach(s => {
+        ctx.fillRect(s.x, s.y, 10, 10);
+    });
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x, food.y, 10, 10);
+}
+
+// MOVE
+function move() {
+    if (!running) return;
+
+    let head = { ...snake[0] };
+
+    if (direction === "UP") head.y -= 10;
+    if (direction === "DOWN") head.y += 10;
+    if (direction === "LEFT") head.x -= 10;
+    if (direction === "RIGHT") head.x += 10;
+
+    // COLLISION
+    if (head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400 ||
+        snake.some(s => s.x === head.x && s.y === head.y)) {
+        alert("GAME OVER");
+        running = false;
+        return;
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+        spawnFood();
+    } else {
+        snake.pop();
+    }
+
+    draw();
+
+    setTimeout(move, 120);
+}
+
+// KEY CONTROL ✅ fixed
+document.addEventListener("keydown", function(e) {
+
+    if (e.key === "ArrowUp" && direction !== "DOWN") {
+        direction = "UP";
+    }
+    else if (e.key === "ArrowDown" && direction !== "UP") {
+        direction = "DOWN";
+    }
+    else if (e.key === "ArrowLeft" && direction !== "RIGHT") {
+        direction = "LEFT";
+    }
+    else if (e.key === "ArrowRight" && direction !== "LEFT") {
+        direction = "RIGHT";
+    }
+
+});
+</script>
 
 
 function spawnFood() {
