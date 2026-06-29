@@ -1,156 +1,45 @@
-import tkinter as tk
-import random
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Snake Game</title>
+    <style>
+        canvas {
+            background: black;
+            display: block;
+            margin: auto;
+        }
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
 
-WIDTH = 400
-HEIGHT = 400
-SIZE = 10
+<button onclick="startGame()">Start Game</button>
+<canvas id="game" width="400" height="400"></canvas>
 
-# Game variables
-snake = []
-direction = "Right"
-food = None
-running = False
-restart_btn = None
+<script>
+let canvas = document.getElementById("game");
+let ctx = canvas.getContext("2d");
 
-# Window
-window = tk.Tk()
-window.title("Snake Game")
-window.resizable(False, False)
+let snake, direction, food, running;
 
-canvas = tk.Canvas(window, width=WIDTH, height=HEIGHT, bg="black")
-canvas.pack()
+function startGame() {
+    snake = [{x:100,y:100},{x:90,y:100},{x:80,y:100}];
+    direction = "RIGHT";
+    running = true;
+    spawnFood();
+    move();
+}
 
-window.focus_set()   # ✅ important for keyboard input
+function spawnFood() {
+    food = {
+        x: Math.floor(Math.random()*40)*10,
+        y: Math.floor(Math.random()*40)*10
+    };
+}
 
-# Start button
-start_btn = tk.Button(window, text="Start Game", font=("Arial", 14))
-start_btn.pack()
-
-
-# ✅ Start Game
-def start_game():
-    global snake, direction, running
-
-    start_btn.pack_forget()
-    running = True
-
-    snake.clear()
-    snake.extend([(100, 100), (90, 100), (80, 100)])
-
-    direction = "Right"
-
-    spawn_food()
-    draw()  # ✅ draw first frame
-    move()
-
-
-# ✅ Spawn Food
-def spawn_food():
-    global food
-    food = (
-        random.randint(0, (WIDTH // SIZE) - 1) * SIZE,
-        random.randint(0, (HEIGHT // SIZE) - 1) * SIZE
-    )
-
-
-# ✅ Draw everything
-def draw():
-    canvas.delete("all")
-
-    for x, y in snake:
-        canvas.create_rectangle(x, y, x + SIZE, y + SIZE, fill="green")
-
-    if food:
-        x, y = food
-        canvas.create_oval(x, y, x + SIZE, y + SIZE, fill="red")
-
-
-# ✅ Game loop
-def move():
-    global running
-
-    if not running:
-        return
-
-    head_x, head_y = snake[0]
-
-    if direction == "Up":
-        head_y -= SIZE
-    elif direction == "Down":
-        head_y += SIZE
-    elif direction == "Left":
-        head_x -= SIZE
-    elif direction == "Right":
-        head_x += SIZE
-
-    new_head = (head_x, head_y)
-
-    # Collision check
-    if (head_x < 0 or head_x >= WIDTH or
-        head_y < 0 or head_y >= HEIGHT or
-        new_head in snake):
-        game_over()
-        return
-
-    snake.insert(0, new_head)
-
-    if new_head == food:
-        spawn_food()
-    else:
-        snake.pop()
-
-    draw()
-
-    window.after(80, move)  # ✅ smoother speed
-
-
-# ✅ Game Over
-def game_over():
-    global running, restart_btn
-    running = False
-
-    canvas.create_text(WIDTH / 2, HEIGHT / 2,
-                       fill="white",
-                       text="GAME OVER",
-                       font=("Arial", 20))
-
-    restart_btn = tk.Button(window, text="Restart",
-                            font=("Arial", 14),
-                            command=restart)
-    restart_btn.pack()
-
-
-# ✅ Restart game
-def restart():
-    global restart_btn
-
-    if restart_btn:
-        restart_btn.destroy()
-
-    canvas.delete("all")
-    start_btn.pack()   # show start button again
-
-
-# ✅ Controls
-def change_direction(event):
-    global direction
-
-    key = event.keysym
-
-    if key == "Up" and direction != "Down":
-        direction = "Up"
-    elif key == "Down" and direction != "Up":
-        direction = "Down"
-    elif key == "Left" and direction != "Right":
-        direction = "Left"
-    elif key == "Right" and direction != "Left":
-        direction = "Right"
-
-
-# Bind keys
-window.bind("<Key>", change_direction)
-
-# Button action
-start_btn.config(command=start_game)
-
-window.mainloop()
+function draw() {
+    ctx.fillStyle = "black";
