@@ -25,6 +25,7 @@ let canvas = document.getElementById("game");
 let ctx = canvas.getContext("2d");
 
 let snake, direction, food, running;
+let direction = "RIGHT"
 
 function startGame() {
     snake = [{x:100,y:100},{x:90,y:100},{x:80,y:100}];
