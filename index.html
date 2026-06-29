@@ -43,3 +43,53 @@ function spawnFood() {
 
 function draw() {
     ctx.fillStyle = "black";
+    ctx.fillRect(0,0,400,400);
+
+    ctx.fillStyle = "green";
+    snake.forEach(s => {
+        ctx.fillRect(s.x, s.y, 10, 10);
+    });
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x, food.y, 10, 10);
+}
+
+function move() {
+    if (!running) return;
+
+    let head = { ...snake[0] };
+
+    if (direction == "UP") head.y -=10;
+    if (direction == "DOWN") head.y +=10;
+    if (direction == "LEFT") head.x -=10;
+    if (direction == "RIGHT") head.x +=10;
+
+    if (head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400 ||
+        snake.some(s => s.x==head.x && s.y==head.y)) {
+        alert("GAME OVER");
+        running = false;
+        return;
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+        spawnFood();
+    } else {
+        snake.pop();
+    }
+
+    draw();
+    setTimeout(move, 100);
+}
+
+document.addEventListener("keydown", function(e) {
+    if (e.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
+    if (e.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
+    if (e.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
+    if (e.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+});
+</script>
+
+</body>
+</html>
