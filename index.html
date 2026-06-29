@@ -31,8 +31,10 @@ function startGame() {
     direction = "RIGHT";
     running = true;
     spawnFood();
-    move();
+    draw();   // ✅ draw immediately
+    move();   // ✅ start movement immediately
 }
+
 
 function spawnFood() {
     food = {
