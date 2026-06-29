@@ -61,16 +61,19 @@
         </div>
     </div>
 
-    <script>
+   
 
+    <script>
         const canvas = document.getElementById("game");
         const ctx = canvas.getContext("2d");
+        
+        ctx.fillStyle = "green";
+        ctx.fillRect(200, 200, 20, 20);
+        
+        ctx.fillStyle = "red";
+        ctx.fillRect(100, 100, 20, 20);
+    </script>
 
-        let snake = [];
-        let food = {};
-        let direction = "RIGHT";
-        let score = 0;
-        let gameLoop;
 
         function startGame() {
 
